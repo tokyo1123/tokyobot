@@ -6,40 +6,27 @@ const bot = mineflayer.createBot({
   port: 54973, // البورت الافتراضي
   username: 'tokyoBot', // اسم البوت في اللعبة
   version: '1.20.1', // يجب أن يكون نفس إصدار السيرفر
-});
+  });
 
-// رسالة عند الاتصال
-bot.on('login', () => {
-  console.log('تم الاتصال بالسيرفر!');
-  bot.chat('مرحبًا! أنا بوت هنا لمساعدتكم.');
-});
+  bot.on('login', () => {
+    console.log('✅ تم الاتصال بالسيرفر!');
+  });
 
-// الرد على الرسائل
-bot.on('chat', (username, message) => {
-  if (username === bot.username) return; // تجاهل رسائل البوت نفسه
+  bot.on('end', () => {
+    console.log('🔁 تم قطع الاتصال! إعادة المحاولة خلال 5 ثوان...');
+    setTimeout(() => createBot(), 5000);
+  });
 
-  if (message === '!hello') {
-    bot.chat(`مرحبًا ${username}! كيف حالك؟`);
-  }
+  bot.on('error', (err) => {
+    console.log('❌ حدث خطأ:', err);
+  });
 
-  if (message === '!help') {
-    bot.chat('الأوامر المتاحة: !hello, !help, !afk');
-  }
-});
+  bot.on('chat', (username, message) => {
+    if (username === bot.username) return;
+    if (message === 'ping') {
+      bot.chat('pong!');
+    }
+  });
+}
 
-// مكافحة التوقف (Anti-AFK)
-setInterval(() => {
-  bot.setControlState('jump', true);
-  setTimeout(() => bot.setControlState('jump', false), 500);
-}, 30000); // يقفز كل 30 ثانية
-
-// إعادة الاتصال عند فقدان الاتصال
-bot.on('end', () => {
-  console.log('تم قطع الاتصال! إعادة المحاولة خلال 5 ثوان...');
-  setTimeout(() => createBot(), 5000);
-});
-
-// معالجة الأخطاء
-bot.on('error', (err) => {
-  console.error('حدث خطأ:', err);
-});
+createBot();
