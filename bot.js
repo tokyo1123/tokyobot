@@ -17,14 +17,24 @@ const mineflayer = require('mineflayer');
 function createBot() {
   const bot = mineflayer.createBot({
     host: 'tokyoserverks.aternos.me', // عنوان السيرفر
-    port: 54973,                    // البورت
-    username: 'TOKyodot',          // اسم البوت
-    version: '1.20.1'              // إصدار ماينكرافت
+    port: 54973,                      // البورت
+    username: 'TOKyodot',            // اسم البوت
+    version: '1.20.1'                // إصدار ماينكرافت
   });
 
   bot.on('login', () => {
     console.log('✅ تم الاتصال بالسيرفر!');
-    bot.chat('مرحبًا! أنا بوت هنا لمساعدتكم.');
+
+    // تسجيل الدخول تلقائيًا
+    setTimeout(() => {
+      bot.chat('/register 000000');
+      console.log('📥 تم إرسال أمر التسجيل /register');
+    }, 3000); // بعد 3 ثوانٍ
+
+    setTimeout(() => {
+      bot.chat('/login 000000');
+      console.log('🔐 تم إرسال أمر الدخول /login');
+    }, 6000); // بعد 6 ثوانٍ
   });
 
   bot.on('chat', (username, message) => {
