@@ -16,8 +16,8 @@ const mineflayer = require('mineflayer');
 
 function createBot() {
   const bot = mineflayer.createBot({
-    host: 'tokyoserverks.aternos.me', // عنوان السيرفر
-    port: 54973,                      // البورت
+    host: 'TokyoServer.aternos.me', // عنوان السيرفر
+    port: 43234,                      // البورت
     username: 'TOKyodot',            // اسم البوت
     version: '1.20.1'                // إصدار ماينكرافت
   });
@@ -68,3 +68,4 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
