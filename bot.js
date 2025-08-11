@@ -41,11 +41,11 @@ function createBot() {
     if (username === bot.username) return;
 
     if (message === '!hello') {
-      bot.chat('مرحبًا ${username}! أهلاً بك في Tokyo DZ Server');
+      bot.chat(`مرحبًا ${username}! اهلا بك في سيرفر توكيو `);
     }
 
-    if (message === '!help') {
-      bot.chat('رابط ديسكورد السيرفر: https://discord.gg/E4XpZeywAJ');
+    if (message === '!discord') {
+      bot.chat('يرجى انضمام الى ديسكورد خاص بنا ');
     }
   });
 
@@ -68,5 +68,3 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
-
-
