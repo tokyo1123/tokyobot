@@ -8,7 +8,8 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(تم تشغيل السيرفر على البورت ${port});
+ console.log(`تم تشغيل السيرفر على البورت ${port}`);
+
 });
 
 // --- mineflayer لربط البوت بماينكرافت ---
@@ -64,3 +65,4 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
