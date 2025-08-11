@@ -41,7 +41,7 @@ function createBot() {
     if (username === bot.username) return;
 
     if (message === '!hello') {
-      bot.chat(مرحبًا ${username}! أهلاً بك في Tokyo DZ Server);
+      bot.chat('مرحبًا ${username}! أهلاً بك في Tokyo DZ Server');
     }
 
     if (message === '!help') {
@@ -68,4 +68,5 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
 
