@@ -8,7 +8,7 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(تم تشغيل السيرفر على البورت ${port});
+  console.log(`تم تشغيل السيرفر على البورت ${port}`);
 });
 
 // --- mineflayer لربط البوت بماينكرافت ---
@@ -41,11 +41,11 @@ function createBot() {
     if (username === bot.username) return;
 
     if (message === '!hello') {
-      bot.chat(مرحبًا ${username}! كيف حالك؟);
+      bot.chat(مرحبًا ${username}! أهلاً بك في Tokyo DZ Server);
     }
 
     if (message === '!help') {
-      bot.chat('الأوامر المتاحة: !hello, !help, !afk');
+      bot.chat('رابط ديسكورد السيرفر: https://discord.gg/E4XpZeywAJ');
     }
   });
 
@@ -68,3 +68,4 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
