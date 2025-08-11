@@ -14,37 +14,40 @@ const mineflayer = require('mineflayer');
 
 function createBot() {
   const bot = mineflayer.createBot({
-    host: 'TokyoServer.aternos.me',
-    port: 43234,
-    username: 'TOKyodot',
-    version: '1.20.1'
+    host: 'TokyoServer.aternos.me', // عنوان السيرفر
+    port: 43234,                    // البورت
+    username: 'TOKyodot',           // اسم البوت
+    version: '1.20.1'               // إصدار ماينكرافت
   });
 
   bot.on('login', () => {
     console.log('✅ تم الاتصال بالسيرفر!');
   });
 
-  // ترحيب باللاعبين الجدد
+  // ترحيب باللاعبين الجدد فقط (وليس عند دخول البوت نفسه)
   bot.on('playerJoined', (player) => {
-    if (player && player.username !== bot.username) {
-      setTimeout(() => {
-        bot.chat(`👋 أهلاً ${player.username} في سيرفر Tokyo DZ!`);
-        bot.chat(`📌 رابط سيرفرنا على الديسكورد: https://discord.gg/E4XpZeywAJ`);
-      }, 2000);
-    }
+    if (!player || player.username === bot.username) return; // تجاهل البوت نفسه
+
+    // انتظر ثواني قليلة قبل إرسال الرسائل لتجنب الطرد
+    setTimeout(() => {
+      bot.chat(`👋 أهلاً ${player.username} في سيرفر Tokyo DZ!`);
+    }, 2000);
+
+    setTimeout(() => {
+      bot.chat(`📌 رابط سيرفرنا على الديسكورد: https://discord.gg/E4XpZeywAJ`);
+    }, 5000);
   });
 
-  // مكافحة AFK + منع Timeout
+  // مكافحة AFK
   setInterval(() => {
     bot.setControlState('jump', true);
     setTimeout(() => bot.setControlState('jump', false), 500);
-    bot.chat(''); // يرسل رسالة فارغة للمحافظة على الاتصال
-  }, 15000);
+  }, 30000);
 
-  // إعادة الاتصال إذا انقطع
+  // إعادة الاتصال عند الخروج
   bot.on('end', () => {
     console.log('⚠️ تم قطع الاتصال! إعادة المحاولة خلال 5 ثوان...');
-    setTimeout(createBot, 5000);
+    setTimeout(() => createBot(), 5000);
   });
 
   bot.on('error', (err) => {
