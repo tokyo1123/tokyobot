@@ -8,7 +8,7 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(تم تشغيل السيرفر على البورت ${port});
+  console.log(`تم تشغيل السيرفر على البورت ${port}`);
 });
 
 // --- mineflayer لربط البوت بماينكرافت ---
@@ -17,35 +17,27 @@ const mineflayer = require('mineflayer');
 function createBot() {
   const bot = mineflayer.createBot({
     host: 'TokyoServer.aternos.me', // عنوان السيرفر
-    port: 43234,                      // البورت
-    username: 'TOKyodot',            // اسم البوت
-    version: '1.20.1'                // إصدار ماينكرافت
+    port: 43234,                    // البورت
+    username: 'TOKyodot',           // اسم البوت
+    version: '1.20.1'               // إصدار ماينكرافت
   });
 
   bot.on('login', () => {
     console.log('✅ تم الاتصال بالسيرفر!');
-
-    // تسجيل الدخول تلقائيًا
-    setTimeout(() => {
-      bot.chat('/register 000000');
-      console.log('📥 تم إرسال أمر التسجيل /register');
-    }, 3000); // بعد 3 ثوانٍ
-
-    setTimeout(() => {
-      bot.chat('/login 000000');
-      console.log('🔐 تم إرسال أمر الدخول /login');
-    }, 6000); // بعد 6 ثوانٍ
   });
 
+  // أوامر الشات
   bot.on('chat', (username, message) => {
     if (username === bot.username) return;
 
-    if (message === '!hello') {
-      bot.chat(مرحبًا ${username}! كيف حالك؟);
-    }
-
-    if (message === '!help') {
-      bot.chat('الأوامر المتاحة: !hello, !help, !afk');
+    if (message === '/tokyo') {
+      bot.chat(`👋 Welcome ${username} to Tokyo DZ Server!`);
+      setTimeout(() => {
+        bot.chat(`📜 This is a fun survival server with friendly players and active staff!`);
+      }, 1500);
+      setTimeout(() => {
+        bot.chat(`🔗 Join our Discord: https://discord.gg/E4XpZeywAJ`);
+      }, 3000);
     }
   });
 
