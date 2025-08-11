@@ -21,14 +21,16 @@ function createBot() {
   });
 
   bot.on('login', () => {
-    console.log('✅ تم الاتصال بالسيرفر!');
+    console.log(`✅ تم الاتصال بالسيرفر باسم ${bot.username}`);
   });
 
-  // ترحيب باللاعبين الجدد فقط (وليس عند دخول البوت نفسه)
+  // ترحيب باللاعبين الجدد فقط إذا لم يكن هو البوت نفسه
   bot.on('playerJoined', (player) => {
-    if (!player || player.username === bot.username) return; // تجاهل البوت نفسه
+    if (!player) return;
+    if (player.username.toLowerCase() === bot.username.toLowerCase()) return; // تجاهل البوت نفسه
 
-    // انتظر ثواني قليلة قبل إرسال الرسائل لتجنب الطرد
+    console.log(`📥 دخل اللاعب ${player.username}`);
+
     setTimeout(() => {
       bot.chat(`👋 أهلاً ${player.username} في سيرفر Tokyo DZ!`);
     }, 2000);
@@ -47,7 +49,7 @@ function createBot() {
   // إعادة الاتصال عند الخروج
   bot.on('end', () => {
     console.log('⚠️ تم قطع الاتصال! إعادة المحاولة خلال 5 ثوان...');
-    setTimeout(() => createBot(), 5000);
+    setTimeout(createBot, 5000);
   });
 
   bot.on('error', (err) => {
