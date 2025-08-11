@@ -27,7 +27,7 @@ function createBot() {
 
     // كل 5 دقائق يرسل ترحيب ورابط ديسكورد
     setInterval(() => {
-      bot.chat(" Hello everyone! Welcome to our humble Discord server ❤️");
+      bot.chat(" Hello everyone! Welcome to our humble Discord server");
       bot.chat(" Join us here: https://discord.gg/E4XpZeywAJ");
     }, 5 * 60 * 1000); // 5 دقائق
   });
@@ -44,10 +44,6 @@ function createBot() {
       bot.chat('الأوامر المتاحة: !hello, !help, !afk');
     }
 
-    if (message === '!tokyo') {
-      bot.chat(` مرحبًا ${username}! أهلاً بك في Tokyo DZ Server`);
-      bot.chat(` رابط ديسكورد السيرفر: https://discord.gg/E4XpZeywAJ`);
-    }
   });
 
   // مكافحة AFK
@@ -69,3 +65,4 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
