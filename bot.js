@@ -41,11 +41,11 @@ function createBot() {
     if (username === bot.username) return;
 
     if (message === '!hello') {
-      bot.chat(`مرحبًا ${username}! اهلا بك في سيرفر توكيو `);
+      bot.chat(`مرحبًا ${username}! كيف حالك؟`);
     }
 
-    if (message === '!discord') {
-      bot.chat('يرجى انضمام الى ديسكورد خاص بنا ');
+    if (message === '!help') {
+      bot.chat('الأوامر المتاحة: !hello, !help, !afk');
     }
   });
 
@@ -68,3 +68,6 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
+احذف بتع لو غين وضف انه اول ما يدخل لشخص لسيقرق يرحب به في سيرفر  Tokyo DZ
+ وثم يرسل رابط سيرفر خاص بنا https://discord.gg/E4XpZeywAJ
