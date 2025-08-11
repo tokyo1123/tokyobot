@@ -68,6 +68,3 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
-
-احذف بتع لو غين وضف انه اول ما يدخل لشخص لسيقرق يرحب به في سيرفر  Tokyo DZ
- وثم يرسل رابط سيرفر خاص بنا https://discord.gg/E4XpZeywAJ
