@@ -27,17 +27,14 @@ function createBot() {
   });
 
   // أمر /tokyo
-  bot.on('chat', (username, message) => {
-    if (username === bot.username) return;
+ bot.on('chat', (username, message) => {
+  if (username === bot.username) return;
 
-    if (message.toLowerCase() === '/tokyo') {
-      bot.chat( Welcome ${username} to Tokyo DZ Server!);
-      setTimeout(() => {
-        bot.chat(Join our Discord: "https://discord./E4XpZeywAJ");
-      }, 1500);
-    }
-  });
-
+  if (message === '/tokyo') {
+    bot.chat(`👋 مرحبًا ${username}! أهلاً بك في Tokyo DZ Server`);
+    bot.chat(`🔗 رابط ديسكورد السيرفر: https://discord.gg/E4XpZeywAJ`);
+  }
+});
   // مكافحة AFK
   setInterval(() => {
     bot.setControlState('jump', true);
@@ -57,3 +54,4 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
