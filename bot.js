@@ -31,11 +31,11 @@ function createBot() {
   bot.on('chat', (username, message) => {
     if (username === bot.username) return;
 
-    if (message.trim().toLowerCase() === '/tokyo') {
-      bot.chat(`👋 مرحبًا ${username}! أهلاً بك في Tokyo DZ Server`);
-      bot.chat(`🔗 رابط ديسكورد السيرفر: https://discord.gg/E4XpZeywAJ`);
-    }
-  });
+    if (message === '/tokyo') {
+    bot.chat(👋 مرحبًا ${username}! أهلاً بك في Tokyo DZ Server);
+    bot.chat(🔗 رابط ديسكورد السيرفر: https://discord.gg/E4XpZeywAJ);
+  }
+});
 
   // مكافحة AFK: يتحرك للأمام ويقفز أحياناً
   setInterval(() => {
@@ -60,3 +60,4 @@ function createBot() {
 
 // تشغيل البوت
 createBot();
+
