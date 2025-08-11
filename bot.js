@@ -19,7 +19,8 @@ function createBot() {
     host: 'TokyoServer.aternos.me', // عنوان السيرفر
     port: 43234,                    // البورت
     username: 'TOKyodot',           // اسم البوت
-    version: '1.20.1'               // إصدار ماينكرافت
+    version: '1.20.1',              // إصدار ماينكرافت
+    keepAlive: true                 // الحفاظ على الاتصال
   });
 
   bot.on('login', () => {
@@ -27,24 +28,29 @@ function createBot() {
   });
 
   // أمر /tokyo
- bot.on('chat', (username, message) => {
-  if (username === bot.username) return;
+  bot.on('chat', (username, message) => {
+    if (username === bot.username) return;
 
-  if (message === '/tokyo') {
-    bot.chat(`👋 مرحبًا ${username}! أهلاً بك في Tokyo DZ Server`);
-    bot.chat(`🔗 رابط ديسكورد السيرفر: https://discord.gg/E4XpZeywAJ`);
-  }
-});
-  // مكافحة AFK
+    if (message.trim().toLowerCase() === '/tokyo') {
+      bot.chat(`👋 مرحبًا ${username}! أهلاً بك في Tokyo DZ Server`);
+      bot.chat(`🔗 رابط ديسكورد السيرفر: https://discord.gg/E4XpZeywAJ`);
+    }
+  });
+
+  // مكافحة AFK: يتحرك للأمام ويقفز أحياناً
   setInterval(() => {
+    bot.setControlState('forward', true);
     bot.setControlState('jump', true);
-    setTimeout(() => bot.setControlState('jump', false), 500);
-  }, 30000);
+    setTimeout(() => {
+      bot.setControlState('forward', false);
+      bot.setControlState('jump', false);
+    }, 1000);
+  }, 60000); // كل دقيقة
 
-  // إعادة الاتصال عند الخروج
+  // إعادة الاتصال عند الخروج أو الخطأ
   bot.on('end', () => {
     console.log('⚠️ تم قطع الاتصال! إعادة المحاولة خلال 5 ثوان...');
-    setTimeout(() => createBot(), 5000);
+    setTimeout(createBot, 5000);
   });
 
   bot.on('error', (err) => {
@@ -52,6 +58,5 @@ function createBot() {
   });
 }
 
-// أول مرة تشغيل
+// تشغيل البوت
 createBot();
-
