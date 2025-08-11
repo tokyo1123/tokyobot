@@ -31,12 +31,12 @@ function createBot() {
     if (username === bot.username) return;
 
     if (message === '/tokyo') {
-      bot.chat(`👋 Welcome ${username} to Tokyo DZ Server!`);
+      bot.chat(` Welcome  to Tokyo DZ Server!`);
       setTimeout(() => {
-        bot.chat(`📜 This is a fun survival server with friendly players and active staff!`);
+        bot.chat(` This is a fun survival server with friendly players and active staff!`);
       }, 1500);
       setTimeout(() => {
-        bot.chat(`🔗 Join our Discord: https://discord.gg/E4XpZeywAJ`);
+        bot.chat(` Join our Discord: https://discord.gg/E4XpZeywAJ`);
       }, 3000);
     }
   });
@@ -60,3 +60,4 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
