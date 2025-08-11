@@ -1,3 +1,4 @@
+// --- Express لإبقاء السيرفر مستيقظ ---
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -7,37 +8,45 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`تم تشغيل السيرفر على البورت ${port}`);
+  console.log(تم تشغيل السيرفر على البورت ${port});
 });
 
+// --- mineflayer لربط البوت بماينكرافت ---
 const mineflayer = require('mineflayer');
 
 function createBot() {
   const bot = mineflayer.createBot({
     host: 'TokyoServer.aternos.me', // عنوان السيرفر
-    port: 43234,                    // البورت
-    username: 'TOKyodot',           // اسم البوت
-    version: '1.20.1'               // إصدار ماينكرافت
+    port: 43234,                      // البورت
+    username: 'TOKyodot',            // اسم البوت
+    version: '1.20.1'                // إصدار ماينكرافت
   });
 
   bot.on('login', () => {
-    console.log(`✅ تم الاتصال بالسيرفر باسم ${bot.username}`);
+    console.log('✅ تم الاتصال بالسيرفر!');
+
+    // تسجيل الدخول تلقائيًا
+    setTimeout(() => {
+      bot.chat('/register 000000');
+      console.log('📥 تم إرسال أمر التسجيل /register');
+    }, 3000); // بعد 3 ثوانٍ
+
+    setTimeout(() => {
+      bot.chat('/login 000000');
+      console.log('🔐 تم إرسال أمر الدخول /login');
+    }, 6000); // بعد 6 ثوانٍ
   });
 
-  // ترحيب باللاعبين الجدد فقط إذا لم يكن هو البوت نفسه
-  bot.on('playerJoined', (player) => {
-    if (!player) return;
-    if (player.username.toLowerCase() === bot.username.toLowerCase()) return; // تجاهل البوت نفسه
+  bot.on('chat', (username, message) => {
+    if (username === bot.username) return;
 
-    console.log(`📥 دخل اللاعب ${player.username}`);
+    if (message === '!hello') {
+      bot.chat(مرحبًا ${username}! كيف حالك؟);
+    }
 
-    setTimeout(() => {
-      bot.chat(`👋 أهلاً ${player.username} في سيرفر Tokyo DZ!`);
-    }, 2000);
-
-    setTimeout(() => {
-      bot.chat(`📌 رابط سيرفرنا على الديسكورد: https://discord.gg/E4XpZeywAJ`);
-    }, 5000);
+    if (message === '!help') {
+      bot.chat('الأوامر المتاحة: !hello, !help, !afk');
+    }
   });
 
   // مكافحة AFK
@@ -49,7 +58,7 @@ function createBot() {
   // إعادة الاتصال عند الخروج
   bot.on('end', () => {
     console.log('⚠️ تم قطع الاتصال! إعادة المحاولة خلال 5 ثوان...');
-    setTimeout(createBot, 5000);
+    setTimeout(() => createBot(), 5000);
   });
 
   bot.on('error', (err) => {
@@ -57,4 +66,5 @@ function createBot() {
   });
 }
 
+// أول مرة تشغيل
 createBot();
