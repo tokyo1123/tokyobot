@@ -17,24 +17,23 @@ const mineflayer = require('mineflayer');
 function createBot() {
   const bot = mineflayer.createBot({
     host: 'TokyoServer.aternos.me', // عنوان السيرفر
-    port: 43234,                      // البورت
-    username: 'TOKyodot',            // اسم البوت
-    version: '1.20.1'                // إصدار ماينكرافت
+    port: 43234,                    // البورت
+    username: 'TOKyodot',           // اسم البوت
+    version: '1.20.1'               // إصدار ماينكرافت
   });
 
   bot.on('login', () => {
     console.log('✅ تم الاتصال بالسيرفر!');
+  });
 
-    // تسجيل الدخول تلقائيًا
-    setTimeout(() => {
-      bot.chat('/register 000000');
-      console.log('📥 تم إرسال أمر التسجيل /register');
-    }, 3000); // بعد 3 ثوانٍ
-
-    setTimeout(() => {
-      bot.chat('/login 000000');
-      console.log('🔐 تم إرسال أمر الدخول /login');
-    }, 6000); // بعد 6 ثوانٍ
+  // ترحيب عند دخول أي لاعب جديد
+  bot.on('playerJoined', (player) => {
+    if (player && player.username !== bot.username) {
+      setTimeout(() => {
+        bot.chat(`👋 أهلاً ${player.username} في سيرفر Tokyo DZ!`);
+        bot.chat(`📌 رابط سيرفرنا على الديسكورد: https://discord.gg/E4XpZeywAJ`);
+      }, 2000);
+    }
   });
 
   bot.on('chat', (username, message) => {
@@ -68,4 +67,3 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
-
