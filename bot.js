@@ -50,12 +50,12 @@ function createBot() {
   setInterval(() => {
     bot.setControlState('jump', true);
     setTimeout(() => bot.setControlState('jump', false), 500);
-  }, 30000);
+  }, 3000);
 
   // إعادة الاتصال عند الخروج
   bot.on('end', () => {
     console.log('⚠️ تم قطع الاتصال! إعادة المحاولة خلال 5 ثوان...');
-    setTimeout(() => createBot(), 5000);
+    setTimeout(() => createBot(), 3000);
   });
 
   bot.on('error', (err) => {
@@ -65,4 +65,5 @@ function createBot() {
 
 // أول مرة تشغيل
 createBot();
+
 
