@@ -41,6 +41,9 @@ app.get('/', (req, res) => {
 server.listen(3000, () => console.log('🌐 Web server running on port 3000'));
 
 let bot;
+let autoMessageInterval = null;
+let autoMoveInterval = null;
+
 function createBot() {
   bot = mineflayer.createBot({
     host: 'TokyoServer.aternos.me',
@@ -51,10 +54,45 @@ function createBot() {
 
   bot.on('login', () => {
     logMsg(`✅ Logged in as ${bot.username}`);
+
+    if (!autoMessageInterval) {
+      autoMessageInterval = setInterval(() => {
+        if (bot && bot.chat) {
+          bot.chat('Welcome to Tokyo dz server — join our Discord: https://discord.gg/E4XpZeywAJ');
+          logMsg('📢 Auto-message sent.');
+        }
+      }, 5 * 60 * 1000);
+    }
+
+    if (!autoMoveInterval) {
+      autoMoveInterval = setInterval(() => {
+        if (!bot.entity) return;
+        bot.setControlState('forward', true);
+        setTimeout(() => {
+          bot.setControlState('forward', false);
+          setTimeout(() => {
+            bot.setControlState('back', true);
+            setTimeout(() => {
+              bot.setControlState('back', false);
+            }, 2500);
+          }, 500);
+        }, 2500);
+      }, 10000);
+    }
   });
 
   bot.on('end', () => {
     logMsg('⚠️ Bot disconnected, reconnecting...');
+
+    if (autoMessageInterval) {
+      clearInterval(autoMessageInterval);
+      autoMessageInterval = null;
+    }
+    if (autoMoveInterval) {
+      clearInterval(autoMoveInterval);
+      autoMoveInterval = null;
+    }
+
     setTimeout(createBot, 5000);
   });
 
@@ -64,28 +102,10 @@ function createBot() {
     logMsg(`<${username}> ${message}`);
   });
 
-  // رسالة تلقائية كل 5 دقائق
-  setInterval(() => {
-    if (bot && bot.chat) {
-      bot.chat('Welcome to Tokyo dz server — join our Discord: https://discord.gg/E4XpZeywAJ');
-      logMsg('📢 Auto-message sent.');
-    }
-  }, 5 * 60 * 1000);
-
-  // يتحرك للأمام والخلف كل 10 ثواني
-  setInterval(() => {
-    if (!bot.entity) return;
-    bot.setControlState('forward', true);
-    setTimeout(() => {
-      bot.setControlState('forward', false);
-      setTimeout(() => {
-        bot.setControlState('back', true);
-        setTimeout(() => {
-          bot.setControlState('back', false);
-        }, 2500);
-      }, 500);
-    }, 2500);
-  }, 10000);
+  bot.on('message', (jsonMsg) => {
+    const msg = jsonMsg.toString();
+    logMsg(`[Minecraft] ${msg}`);
+  });
 }
 
 // إرسال الرسائل من الموقع للبوت
@@ -107,4 +127,3 @@ function logMsg(msg) {
 }
 
 createBot();
-
