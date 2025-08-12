@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 server.listen(3000, () => console.log('🌐 Web server running on port 3000'));
 
 let bot;
-function startBot() {
+function createBot() {
   bot = mineflayer.createBot({
     host: 'TokyoServer.aternos.me',
     port: 43234,
@@ -107,3 +107,4 @@ function logMsg(msg) {
 }
 
 createBot();
+
