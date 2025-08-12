@@ -5,7 +5,7 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const axios = require('axios'); // ممكن تحذفه لأننا ما نستخدمه بدون AI
+const axios = require('axios');
 
 const app = express();
 const server = http.createServer(app);
@@ -290,6 +290,36 @@ server.listen(3000, () => console.log('🌐 Web server running on port 3000'));
 const discordToken = process.env.DISCORD_TOKEN;
 const discordChannelId = process.env.DISCORD_CHANNEL_ID;
 
+// Ollama AI Config
+const OLLAMA_API_URL = process.env.OLLAMA_URL || "http://localhost:11434/api/generate";
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama2";
+
+async function askAI(question) {
+  try {
+    const response = await axios.post(
+      OLLAMA_API_URL,
+      {
+        model: OLLAMA_MODEL,
+        prompt: question,
+        stream: false
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (response.data && response.data.response) {
+      return response.data.response.trim();
+    }
+    return "I couldn't think of an answer.";
+  } catch (err) {
+    console.error("AI Error:", err.message);
+    return "Error fetching AI response.";
+  }
+}
+
 const discordClient = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -378,7 +408,14 @@ function createBot() {
   bot.on('chat', (username, message) => {
     logMsg(`<${username}> ${message}`, 'chat');
 
-    // Removed AI related code here (no !ask commands)
+    if (message.startsWith('!ask ')) {
+      const question = message.slice(5).trim();
+      if (!question) return bot.chat("Please provide a question.");
+      bot.chat("💭 Thinking...");
+      askAI(question).then(answer => {
+        bot.chat(`🤖 ${answer}`);
+      });
+    }
 
     if (sendMinecraftToDiscord && discordClient.isReady()) {
       const channel = discordClient.channels.cache.get(discordChannelId);
@@ -504,6 +541,12 @@ discordClient.on('messageCreate', async (message) => {
 - Discord Bot: ${discordClient.isReady() ? '✅ Online' : '❌ Offline'}
 - Minecraft Bot: ${bot ? '✅ Connected' : '❌ Disconnected'}
 - Website: ${lastWebsiteStatus}`);
+  } else if (content.startsWith('/ask ')) {
+    const question = content.slice(5).trim();
+    if (!question) return message.reply("Please provide a question.");
+    message.channel.send("💭 Thinking...");
+    const answer = await askAI(question);
+    message.channel.send(`🤖 ${answer}`);
   } else {
     if (bot && bot.chat) {
       bot.chat(content);
