@@ -67,7 +67,7 @@ function startBot() {
   // رسالة تلقائية كل 5 دقائق
   setInterval(() => {
     if (bot && bot.chat) {
-      bot.chat('Welcome to Tokyo dz server — join our Discord: https://discord.gg/E4XpZeywAJ | TokyoServer.aternos.me:43234');
+      bot.chat('Welcome to Tokyo dz server — join our Discord: https://discord.gg/E4XpZeywAJ');
       logMsg('📢 Auto-message sent.');
     }
   }, 5 * 60 * 1000);
@@ -107,3 +107,4 @@ function logMsg(msg) {
 }
 
 startBot();
+
