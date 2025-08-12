@@ -29,11 +29,12 @@ server.listen(3000, () => console.log('Web server running on port 3000'));
 
 let bot;
 function startBot() {
-  bot = mineflayer.createBot({
-    host: 'TokyoServer.aternos.me',
-    port: 43234,
-    username: 'TOKyodot',
-  });
+ bot = mineflayer.createBot({
+  host: 'TokyoServer.aternos.me',
+  port: 43234,
+  username: 'TOKyodot',
+  version: '1.20.4' // ← أضف إصدار السيرفر هنا
+});
 
   bot.on('login', () => {
     logMsg(`✅ Logged in as ${bot.username}`);
@@ -82,3 +83,4 @@ function logMsg(msg) {
 }
 
 startBot();
+
