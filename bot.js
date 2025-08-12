@@ -55,7 +55,7 @@ function createBot() {
 
   bot.on('end', () => {
     logMsg('⚠️ Bot disconnected, reconnecting...');
-    setTimeout(startBot, 5000);
+    setTimeout(createBot, 5000);
   });
 
   bot.on('error', (err) => logMsg(`❌ Error: ${err}`));
@@ -107,5 +107,6 @@ function logMsg(msg) {
 }
 
 createBot();
+
 
 
