@@ -5,6 +5,7 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const axios = require('axios'); // ممكن تحذفه لأننا ما نستخدمه بدون AI
 
 const app = express();
 const server = http.createServer(app);
@@ -15,8 +16,8 @@ app.get('/', (req, res) => {
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>TOKyodot Bot Control</title>
       <style>
         :root {
@@ -193,6 +194,7 @@ app.get('/', (req, res) => {
           <h1>TOKyodot Bot Control Panel</h1>
           <div class="status" id="connection-status">Loading...</div>
         </header>
+        
         <div class="panel">
           <div class="log-container">
             <div class="logs" id="logs"></div>
@@ -201,6 +203,7 @@ app.get('/', (req, res) => {
               <button id="send-btn">Send</button>
             </div>
           </div>
+          
           <div class="controls">
             <div class="control-title">Bot Controls</div>
             <div class="control-buttons">
@@ -219,49 +222,62 @@ app.get('/', (req, res) => {
         const msgInput = document.getElementById('msg');
         const sendBtn = document.getElementById('send-btn');
         const statusElement = document.getElementById('connection-status');
-
-        // Control buttons
+        
+        // Elements for control buttons
         const startBtn = document.getElementById('start-btn');
         const stopBtn = document.getElementById('stop-btn');
         const restartBtn = document.getElementById('restart-btn');
-
+        
+        // Format timestamp
         function getTimestamp() {
           const now = new Date();
-          return now.toTimeString().split(' ')[0];
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          const seconds = now.getSeconds().toString().padStart(2, '0');
+          return \`\${hours}:\${minutes}:\${seconds}\`;
         }
-
-        function addLog(message, type = 'system') {
+        
+        // Add log message
+        function addLog(msg, type = 'system') {
           const logEntry = document.createElement('div');
-          logEntry.className = 'log-entry ' + type;
-          logEntry.innerHTML = `<span class="timestamp">${getTimestamp()}</span> ${message}`;
+          logEntry.className = \`log-entry \${type}\`;
+          logEntry.innerHTML = \`<span class="timestamp">\${getTimestamp()}</span>\${msg}\`;
           logs.appendChild(logEntry);
           logs.scrollTop = logs.scrollHeight;
         }
-
-        socket.on('log', data => addLog(data.message, data.type || 'system'));
-        socket.on('status', status => {
-          statusElement.textContent = status.text;
-          statusElement.className = 'status ' + (status.online ? 'online' : 'offline');
+        
+        // Socket events
+        socket.on('log', (data) => {
+          addLog(data.message, data.type || 'system');
         });
-
+        
+        socket.on('status', (status) => {
+          statusElement.textContent = status.text;
+          statusElement.className = \`status \${status.online ? 'online' : 'offline'}\`;
+        });
+        
+        // Send message function
         function sendMessage() {
           const msg = msgInput.value.trim();
-          if (!msg) return;
-          socket.emit('sendMessage', msg);
-          addLog(`[You] ${msg}`, 'chat');
-          msgInput.value = '';
+          if (msg) {
+            socket.emit('sendMessage', msg);
+            addLog(\`[You] \${msg}\`, 'chat');
+            msgInput.value = '';
+          }
         }
-
-        sendBtn.onclick = sendMessage;
-        msgInput.addEventListener('keypress', e => {
+        
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        msgInput.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') sendMessage();
         });
-
-        startBtn.onclick = () => socket.emit('control', 'start');
-        stopBtn.onclick = () => socket.emit('control', 'stop');
-        restartBtn.onclick = () => socket.emit('control', 'restart');
-
-        // Request initial status
+        
+        // Control buttons
+        startBtn.addEventListener('click', () => socket.emit('control', 'start'));
+        stopBtn.addEventListener('click', () => socket.emit('control', 'stop'));
+        restartBtn.addEventListener('click', () => socket.emit('control', 'restart'));
+        
+        // Initial status
         socket.emit('getStatus');
       </script>
     </body>
@@ -305,20 +321,16 @@ async function walkForwardBackward() {
 function logMsg(msg, type = 'system') {
   console.log(msg);
   io.emit('log', { message: msg, type });
-
+  
+  // Update status in the web interface
   const isOnline = bot !== null;
   io.emit('status', {
     text: isOnline ? 'Online' : 'Offline',
-    online: isOnline,
+    online: isOnline
   });
 }
 
 function createBot() {
-  if (bot) {
-    logMsg('⚠️ Bot is already running.');
-    return;
-  }
-
   bot = mineflayer.createBot({
     host: 'TokyoServer.aternos.me',
     port: 43234,
@@ -346,12 +358,27 @@ function createBot() {
     }
   });
 
-  // *** IMPORTANT CHANGE: Remove 'end' handler to prevent auto-reconnect or quitting ***
+  bot.on('end', () => {
+    logMsg('⚠️ Bot disconnected, reconnecting...', 'error');
+
+    if (autoMessageInterval) {
+      clearInterval(autoMessageInterval);
+      autoMessageInterval = null;
+    }
+    if (autoMoveInterval) {
+      clearInterval(autoMoveInterval);
+      autoMoveInterval = null;
+    }
+
+    setTimeout(createBot, 5000);
+  });
 
   bot.on('error', (err) => logMsg(`❌ Error: ${err}`, 'error'));
 
   bot.on('chat', (username, message) => {
     logMsg(`<${username}> ${message}`, 'chat');
+
+    // Removed AI related code here (no !ask commands)
 
     if (sendMinecraftToDiscord && discordClient.isReady()) {
       const channel = discordClient.channels.cache.get(discordChannelId);
@@ -364,10 +391,11 @@ function createBot() {
 
 io.on('connection', (socket) => {
   logMsg('🌐 Web client connected');
-
+  
+  // Send initial status
   socket.emit('status', {
     text: bot ? 'Online' : 'Offline',
-    online: bot !== null,
+    online: bot !== null
   });
 
   socket.on('sendMessage', (msg) => {
@@ -410,10 +438,23 @@ io.on('connection', (socket) => {
   socket.on('getStatus', () => {
     socket.emit('status', {
       text: bot ? 'Online' : 'Offline',
-      online: bot !== null,
+      online: bot !== null
     });
   });
 });
+
+// Website check every 5 minutes
+let lastWebsiteStatus = 'Unknown';
+async function checkWebsite() {
+  try {
+    await axios.get('https://lol-33.onrender.com/');
+    lastWebsiteStatus = '✅ Online';
+  } catch (err) {
+    lastWebsiteStatus = '❌ Offline';
+  }
+}
+setInterval(checkWebsite, 5 * 60 * 1000);
+checkWebsite();
 
 discordClient.on('ready', () => {
   console.log(`Discord Bot logged in as ${discordClient.user.tag}`);
@@ -461,7 +502,8 @@ discordClient.on('messageCreate', async (message) => {
   } else if (content === '/ping') {
     message.channel.send(`📊 **System Status**:
 - Discord Bot: ${discordClient.isReady() ? '✅ Online' : '❌ Offline'}
-- Minecraft Bot: ${bot ? '✅ Connected' : '❌ Disconnected'}`);
+- Minecraft Bot: ${bot ? '✅ Connected' : '❌ Disconnected'}
+- Website: ${lastWebsiteStatus}`);
   } else {
     if (bot && bot.chat) {
       bot.chat(content);
