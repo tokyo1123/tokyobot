@@ -13,7 +13,7 @@ function createBot() {
   bot = mineflayer.createBot({
     host: 'Tokyo_-server.aternos.me',
     port: 43234,
-    version:'1.21.8',
+    version:'1.21.1',
     username: 'TOKyobot',
     connectTimeout: 60000
   });
@@ -79,5 +79,6 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🌐 الموقع شغال على http://localhost:${PORT}`);
 });
+
 
 
