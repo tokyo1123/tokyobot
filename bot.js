@@ -11,10 +11,11 @@ let jumpInterval = null;
 
 function createBot() {
   bot = mineflayer.createBot({
-    host: 'TokyoServer.aternos.me',
+    host: 'Tokyo_-server.aternos.me',
     port: 43234,
-    username: 'TOKyodot',
-    connectTimeout: 60000,
+    version: 1.21.8,
+    username: 'TOKyobot',
+    connectTimeout: 60000
   });
 
   bot.once('login', () => {
@@ -78,3 +79,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🌐 الموقع شغال على http://localhost:${PORT}`);
 });
+
