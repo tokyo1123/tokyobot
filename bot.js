@@ -7,33 +7,52 @@ const app = express();
 const PORT = 3000;
 
 let bot = null;
-let jumpInterval = null;
+let walkLoop = null;
+
+// دالة مساعدة للنوم (توقف التنفيذ لوقت معين)
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// دالة الحركة للأمام والخلف
+async function walkForwardBackward() {
+  if (!bot || !bot.entity) return;
+
+  try {
+    bot.setControlState('forward', true);
+    await sleep(15000);
+    bot.setControlState('forward', false);
+
+    bot.setControlState('back', true);
+    await sleep(15000);
+    bot.setControlState('back', false);
+  } catch (err) {
+    console.log("❌ خطأ أثناء الحركة:", err.message);
+  }
+}
 
 function createBot() {
   bot = mineflayer.createBot({
     host: 'Tokyo_-server.aternos.me',
     port: 52532,
     version:'1.21.1',
-    username: 'TOKyobot',
+    username: 'TOKyo',
     connectTimeout: 60000
   });
 
   bot.once('login', () => {
     console.log('✅ Bot logged in');
 
-    // القفز كل 5 ثواني
-    jumpInterval = setInterval(() => {
-      if (bot.entity && !bot.entity.isInWater) {
-        bot.setControlState('jump', true);
-        setTimeout(() => bot.setControlState('jump', false), 500);
-      }
-    }, 5000);
+    // بدء حلقة الحركة المتكررة
+    walkLoop = setInterval(() => {
+      walkForwardBackward();
+    }, 31000); // 15 ثانية للأمام + 15 ثانية للخلف + 1 ثانية فاصلة
   });
 
   bot.on('end', () => {
     console.log('⚠️ Bot disconnected');
-    clearInterval(jumpInterval);
-    jumpInterval = null;
+    clearInterval(walkLoop);
+    walkLoop = null;
 
     // إعادة الاتصال بعد 5 ثواني
     setTimeout(createBot, 5000);
@@ -79,7 +98,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🌐 الموقع شغال على http://localhost:${PORT}`);
 });
-
-
-
-
